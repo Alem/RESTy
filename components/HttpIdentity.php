@@ -22,13 +22,9 @@
 class HttpIdentity extends CBaseUserIdentity
 {
 
-	const ERROR_AUTH_HEADER_MISSING = 101;
-
-	const ERROR_INVALID_AUTH_HEADER = 102;
-
 	const ERROR_FAILED_EXTRACT_PROCESSING = 103;
 
-	public $extracted_auth_header = null;
+	public $HttpAuthRequest = null;
 
 	public $www_authenticate = array(
 		'auth_scheme' => 'Unencoded',
@@ -56,37 +52,6 @@ class HttpIdentity extends CBaseUserIdentity
 		return array( $www_authenticate_string );
 	}
 
-	/**
-	 * Poulates extracted_auth_header property with an array containing two values:
-	 * the auth-scheme, and the auth-params. These values are
-	 * extracted from the 'Authorization' request header.
-	 *
-	 * @return array 	An associative array with two keys: auth_scheme and auth_params.
-	 */
-	public function extractAuthHeader()
-	{
-		$headers = getallheaders();
-		if( isset( $headers['Authorization'] ) )
-		{
-			$auth_header = explode( ' ', $headers['Authorization'] );
-
-			if( count($headers) === 2 )
-			{
-				return array(
-					'auth_scheme' => strtolower($auth_header[0]),
-					'auth_params' => $auth_header[1],
-				);
-			}
-			else
-				$this->errorCode = ERROR_INVALID_AUTH_HEADER;
-
-		}
-		else
-			$this->errorCode = ERROR_AUTH_HEADER_MISSING;
-
-		return null;
-	}
-
 
 	/**
 	 * HTTP authentication forms must implement
@@ -100,9 +65,9 @@ class HttpIdentity extends CBaseUserIdentity
 	 * @param string $auth_params 	Auth params from the Authorization request header.
 	 * @return bool True on success
 	 */
-	public function processAuthExtract( $auth_header )
+	public function processAuthExtract( $HttpAuthRequest )
 	{
-		$credentials = explode( ':', $auth_header['auth_params'] );	
+		$credentials = explode( ':', $HttpAuthRequest->params );	
 
 		if( count( $credentials ) === 2 )
 		{
@@ -142,14 +107,9 @@ class HttpIdentity extends CBaseUserIdentity
 	 *
 	 * @return boolean whether authentication succeeds.
 	 */
-	public function authenticate()
+	public function authenticate( $HttpAuthRequest )
 	{
-		$auth_header = $this->extractAuthHeader();
-
-		if( $auth_header === null )
-			return false;
-
-		if( $this->processAuthExtract( $auth_header ) !== true )
+		if( $this->processAuthExtract( $HttpAuthRequest ) !== true )
 			return false;
 
 		if( $this->test_mode )

@@ -15,7 +15,7 @@ require( __DIR__.'/../vendors/minimvc/Response.php');
  */
 abstract class RESTController extends Controller
 {
-	
+
 	/** 
 	 * Used to provide aliases for HTTP request methods
 	 * For example, 'get'=>'gt'
@@ -38,12 +38,11 @@ abstract class RESTController extends Controller
 	 * Http Authentication type
 	 *
 	 * Options: 
-	 * - 'HttpBasic' for Basic Authentication, 
-	 * - 'HttpDigest' for Digest Authentication
-	 * - 'Http' for Unencoded authentication
-	 * - null for no authentication
+	 * - 'Basic' for Basic Authentication, 
+	 * - 'Digest' for Digest Authentication
+	 * - 'null' for Unencoded authentication
 	 */
-	public $auth_type = 'HttpBasic';
+	public $auth_type = array('Basic');
 
 	/**
 	 * Provides common structure for routing verb specific 
@@ -86,7 +85,7 @@ abstract class RESTController extends Controller
 	 */
 	public function filters()
 	{
-		if( $this->auth_type !== null )
+		if( $this->require_auth === true )
 			return array( 'auth' );
 		else 
 			return array();
@@ -100,16 +99,29 @@ abstract class RESTController extends Controller
 	 */
 	public function filterAuth( $filterChain )
 	{
-		$identity_class = $this->auth_type.'Identity';
-		$HttpIdentity = new $identity_class();
-
-		if( $HttpIdentity->authenticate() )
-			$filterChain->run();
-		else 
+		$HttpAuthRequest = new HttpAuthRequest();
+		$HttpAuthRequest->fetch();
+		$more_headers = array();
+	
+		$key = array_search( 
+			$HttpAuthRequest->scheme, array_map(
+				'strtolower', $this->auth_type
+			)
+		);
+			
+		if( $key !== false )
 		{
+			$identity_class = 'Http'.$this->auth_type[$key].'Identity';
+			$HttpIdentity = new $identity_class();
+
+			if( $HttpIdentity->authenticate( $HttpAuthRequest ) )
+			{
+				$filterChain->run();
+				return;
+			}
 			$more_headers = $HttpIdentity->makeAuthenticateHeader();
-			$this->response( '401', "Not authorized", "html", $more_headers);
 		}
+			$this->response( '401', "Not authorized", "html", $more_headers);
 	}
 
 	/**

@@ -40,19 +40,8 @@ class HttpDigestIdentity extends HttpIdentity
 	}
 
 
-	/**
-	 * Skipped if using PHP's native http authorization support
-	 */
-	public function extractAuthHeader()
-	{
-		if( $this->use_php_http_auth === true )
-			return true;
-		else
-			return parent::extractAuthHeader();
-	}
-
 	/** HTTP headers to extract, and the class properties to populate */
-	public function processAuthExtract( $auth_header )
+	public function processAuthExtract( $HttpAuthRequest )
 	{
 		if( $this->use_php_http_auth === true )
 			return $this->phpHttpAuth();
