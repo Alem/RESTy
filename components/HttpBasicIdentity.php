@@ -27,7 +27,7 @@ class HttpBasicIdentity extends HttpIdentity
 
 	public $password = null;
 
-	public $use_php_http_auth = true;
+	public $use_php_http_auth = false;
 
 	/**
 	 * Skipped if using PHP's native http authorization support
@@ -41,13 +41,13 @@ class HttpBasicIdentity extends HttpIdentity
 	}
 
 	/** HTTP headers to extract, and the class properties to populate */
-	public function processAuthExtract()
+	public function processAuthExtract( $auth_header )
 	{
 		if( $this->use_php_http_auth === true )
 			return $this->phpHttpAuth();
 		else
 		{
-			$decoded_params = base64_decode( $this->extracted_auth_header['auth_params'] );
+			$decoded_params['auth_params'] = base64_decode( $auth_header['auth_params'] );
 			return parent::processAuthExtract( $decoded_params );
 		}
 

@@ -12,20 +12,20 @@ component. These subclasses reside in their own sub-directory within the normal 
 directory (e.g. controllers/api/ ).
 
 HTTP requests to these controllers are routed by their HTTP request method 
-to the controller method matching the naming convention {REQUEST METHOD}{CLASS METHOD}().
+to the controller method matching the naming convention REQUEST METHOD+CLASS METHOD().
 
-## Example REST Routing
+### Example REST Routing
 
 The following are examples of this routing form 
 (assume default REST controller directory 'api/'):
 
-	GET 	example.com/index.php/api/user/		UserController->get();
-	GET 	example.com/index.php/api/user?=blah	UserController->get();
-	GET 	example.com/index.php/api/user/lookup	UserController->getLookup();
-	POST 	example.com/index.php/api/user/		UserController->post();
-	DELETE 	example.com/index.php/api/user/		UserController->delete();
+	GET 	example.com/index.php/api/user/			UserController->get();
+	GET 	example.com/index.php/api/user?name=blah	UserController->get(); (with GET parameter name)
+	GET 	example.com/index.php/api/user/lookup		UserController->getLookup();
+	POST 	example.com/index.php/api/user/			UserController->post();
+	DELETE 	example.com/index.php/api/user/			UserController->delete();
 	
-## HTTP Authentication
+### HTTP Authentication
 
 RESTy includes HTTP authentication support using the Basic frameworks.
 These are managed by the HTTP[auth type]Identity components. The type of authentication
@@ -57,7 +57,7 @@ Client Authorizing using Digest [Not Supported Yet]
                  opaque="5ccc069c403ebaf9f0171e9517f40e41"
 -->
 
-### General Tip
+#### General Tip
 
 This extension, and method of providing an API, result another set of controllers.
 A simple way of reducing the development required to support both sets of controllers 
@@ -84,7 +84,7 @@ SETUP
                         ...
                         'urlFormat'=>'path',
                         'rules'=>array(
-                                array(  'class'  =>'application.extensions.resty.components.RestUrlRule'  ),
+                                array( 'class'  =>'application.extensions.resty.components.RestUrlRule' ),
                         ...
                         ),
                 ...

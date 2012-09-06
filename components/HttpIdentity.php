@@ -41,7 +41,7 @@ class HttpIdentity extends CBaseUserIdentity
 
 	public $test_mode = false;
 
-	public $test_credentials = array( 'username' => '', 'password'=>'' );
+	public $test_credentials = array( 'username' => 'api_user', 'password'=>'api_key' );
 
 	/**
 	 * An array of the HTTP headers that will be presented upon access to a protected resource
@@ -100,9 +100,9 @@ class HttpIdentity extends CBaseUserIdentity
 	 * @param string $auth_params 	Auth params from the Authorization request header.
 	 * @return bool True on success
 	 */
-	public function processAuthExtract( $auth_params )
+	public function processAuthExtract( $auth_header )
 	{
-		$credentials = explode( ':', $auth_params );	
+		$credentials = explode( ':', $auth_header['auth_params'] );	
 
 		if( count( $credentials ) === 2 )
 		{

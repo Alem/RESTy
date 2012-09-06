@@ -52,14 +52,12 @@ class HttpDigestIdentity extends HttpIdentity
 	}
 
 	/** HTTP headers to extract, and the class properties to populate */
-	public function processAuthExtract()
+	public function processAuthExtract( $auth_header )
 	{
 		if( $this->use_php_http_auth === true )
 			return $this->phpHttpAuth();
 		else
 		{
-			$decoded_params = base64_decode( $this->extracted_auth_header['auth_params'] );
-			return parent::processAuthExtract( $decoded_params );
 		}
 
 	}
