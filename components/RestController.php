@@ -100,7 +100,6 @@ abstract class RESTController extends Controller
 	public function filterAuth( $filterChain )
 	{
 		$HttpAuthRequest = new HttpAuthRequest();
-		$HttpAuthRequest->fetch();
 		$more_headers = array();
 	
 		$key = array_search( 
@@ -112,9 +111,9 @@ abstract class RESTController extends Controller
 		if( $key !== false )
 		{
 			$identity_class = 'Http'.$this->auth_type[$key].'Identity';
-			$HttpIdentity = new $identity_class();
+			$HttpIdentity = new $identity_class( $HttpAuthRequest );
 
-			if( $HttpIdentity->authenticate( $HttpAuthRequest ) )
+			if( $HttpIdentity->authenticate() )
 			{
 				$filterChain->run();
 				return;

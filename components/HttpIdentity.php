@@ -39,6 +39,11 @@ class HttpIdentity extends CBaseUserIdentity
 
 	public $test_credentials = array( 'username' => 'api_user', 'password'=>'api_key' );
 
+	public function __construct( $HttpAuthRequest )
+	{
+		$this->HttpAuthRequest = $HttpAuthRequest;
+	}
+
 	/**
 	 * An array of the HTTP headers that will be presented upon access to a protected resource
 	 * This will accompany the HTTP 401 status code
@@ -62,12 +67,11 @@ class HttpIdentity extends CBaseUserIdentity
 	 * username:password string and populates the username
 	 * and password properties
 	 *
-	 * @param string $auth_params 	Auth params from the Authorization request header.
 	 * @return bool True on success
 	 */
-	public function processAuthExtract( $HttpAuthRequest )
+	public function processAuthExtract()
 	{
-		$credentials = explode( ':', $HttpAuthRequest->params );	
+		$credentials = explode( ':', $this->HttpAuthRequest->params );	
 
 		if( count( $credentials ) === 2 )
 		{
@@ -107,9 +111,9 @@ class HttpIdentity extends CBaseUserIdentity
 	 *
 	 * @return boolean whether authentication succeeds.
 	 */
-	public function authenticate( $HttpAuthRequest )
+	public function authenticate()
 	{
-		if( $this->processAuthExtract( $HttpAuthRequest ) !== true )
+		if( $this->processAuthExtract() !== true )
 			return false;
 
 		if( $this->test_mode )

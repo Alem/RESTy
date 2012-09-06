@@ -30,14 +30,14 @@ class HttpBasicIdentity extends HttpIdentity
 	public $use_php_http_auth = false;
 
 	/** HTTP headers to extract, and the class properties to populate */
-	public function processAuthExtract( $HttpAuthRequest )
+	public function processAuthExtract()
 	{
 		if( $this->use_php_http_auth === true )
 			return $this->phpHttpAuth();
 		else
 		{
-			$HttpAuthRequest->params = base64_decode( $HttpAuthRequest->params );
-			return parent::processAuthExtract( $HttpAuthRequest );
+			$this->HttpAuthRequest->params = base64_decode( $this->HttpAuthRequest->params );
+			return parent::processAuthExtract();
 		}
 
 	}

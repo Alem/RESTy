@@ -29,6 +29,14 @@ class HttpAuthRequest
 	public $params = null;
 
 	/**
+	 * Populates scheme and params
+	 */
+	public function __construct()
+	{
+		$this->fetch();
+	}
+
+	/**
 	 * Poulates scheme and params property with 
 	 * the auth-scheme, and the auth-params. These values are
 	 * extracted from the 'Authorization' request header.
@@ -41,18 +49,16 @@ class HttpAuthRequest
 		if( isset( $headers['Authorization'] ) )
 		{
 			$auth_header = explode( ' ', $headers['Authorization'] );
-
-			if( count($headers) === 2 )
+			if( count($auth_header) === 2 )
 			{
 				$this->scheme = strtolower($auth_header[0]);
 				$this->params = $auth_header[1];
 			}
 			else
-				$this->errorCode = ERROR_INVALID_AUTH_HEADER;
-
+				$this->errorCode = self::ERROR_INVALID_AUTH_HEADER;
 		}
 		else
-			$this->errorCode = ERROR_AUTH_HEADER_MISSING;
+			$this->errorCode = self::ERROR_AUTH_HEADER_MISSING;
 	}
 
 }
