@@ -1,8 +1,7 @@
 <?php
 /**
  * HttpAuthRequest provides methods for accessing
- * the Authentication HTTP request header.
- *
+ * the Authorization HTTP request header.
  */
 class HttpAuthRequest
 {

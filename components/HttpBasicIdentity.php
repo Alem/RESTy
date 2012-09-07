@@ -18,7 +18,7 @@
  */
 class HttpBasicIdentity extends HttpIdentity
 {
-	public $www_authenticate = array(
+	public $www_auth = array(
 		'auth_scheme' => 'Basic',
 		'realm' => 'Restricted Area'
 	);

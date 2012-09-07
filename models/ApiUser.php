@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This is the model class for table "{{api_users}}".
+ * This is the model class for table "tbl_api_users".
  *
- * The followings are the available columns in table '{{api_users}}':
+ * The followings are the available columns in table 'tbl_api_users':
  * @property integer $id
  * @property string $username
  * @property string $password
@@ -16,6 +16,9 @@
  */
 class ApiUser extends CActiveRecord
 {
+
+	public $api_user_table = 'tbl_api_users';
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -31,7 +34,7 @@ class ApiUser extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return '{{api_users}}';
+		return $this->api_user_table;
 	}
 
 	/**

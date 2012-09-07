@@ -42,7 +42,7 @@ abstract class RESTController extends Controller
 	 * - 'Digest' for Digest Authentication
 	 * - 'null' for Unencoded authentication
 	 */
-	public $auth_type = array('Basic');
+	public $accepted_auth_schemes = array('Basic');
 
 	/**
 	 * Provides common structure for routing verb specific 
@@ -86,42 +86,17 @@ abstract class RESTController extends Controller
 	public function filters()
 	{
 		if( $this->require_auth === true )
-			return array( 'auth' );
+		{
+			return array(
+				'applicaton.extensions.resty.components.HttpAuthFilter',
+				'accepted_auth_schemes' =>$this->accepted_auth_schemes,
+				'default_content_type' =>$this->default_content_type,
+			);
+		}
 		else 
 			return array();
 	}
 
-	/**
-	 * Performs HTTP Basic Authentication
-	 * before execution of a RestController method
-	 *
-	 * @param CFilterChain $filter 	The filter chain
-	 */
-	public function filterAuth( $filterChain )
-	{
-		$HttpAuthRequest = new HttpAuthRequest();
-		$more_headers = array();
-	
-		$key = array_search( 
-			$HttpAuthRequest->scheme, array_map(
-				'strtolower', $this->auth_type
-			)
-		);
-			
-		if( $key !== false )
-		{
-			$identity_class = 'Http'.$this->auth_type[$key].'Identity';
-			$HttpIdentity = new $identity_class( $HttpAuthRequest );
-
-			if( $HttpIdentity->authenticate() )
-			{
-				$filterChain->run();
-				return;
-			}
-			$more_headers = $HttpIdentity->makeAuthenticateHeader();
-		}
-			$this->response( '401', "Not authorized", "html", $more_headers);
-	}
 
 	/**
 	 * Sends HTTP header and body.

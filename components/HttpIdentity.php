@@ -26,7 +26,7 @@ class HttpIdentity extends CBaseUserIdentity
 
 	public $HttpAuthRequest = null;
 
-	public $www_authenticate = array(
+	public $www_auth = array(
 		'auth_scheme' => 'Unencoded',
 		'realm' => 'Restricted Area'
 	);
@@ -52,8 +52,8 @@ class HttpIdentity extends CBaseUserIdentity
 	 */
 	public function makeAuthenticateHeader()
 	{
-		$www_authenticate_string = 'WWW-Authenticate: ' . $this->www_authenticate['auth_scheme']; 
-		$www_authenticate_string.= ' realm="'.$this->www_authenticate['realm'].'"';
+		$www_authenticate_string = 'WWW-Authenticate: ' . $this->www_auth['auth_scheme']; 
+		$www_authenticate_string.= ' realm="'.$this->www_auth['realm'].'"';
 		return array( $www_authenticate_string );
 	}
 

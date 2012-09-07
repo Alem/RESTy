@@ -13,7 +13,7 @@
  */
 class HttpDigestIdentity extends HttpIdentity
 {
-	public $www_authenticate = array(
+	public $www_auth= array(
 		'auth_scheme' => 'Digest',
 		'realm' => 'Restricted Area',
 		'qop' => '',
@@ -33,15 +33,15 @@ class HttpDigestIdentity extends HttpIdentity
 	public function makeAuthenticateHeader()
 	{
 		$nonce = uniqid();
-		$www_authenticate_string = 'WWW-Authenticate: Digest realm="'.$this->www_authenticate['realm'];
-		$www_authenticate_string.= '",qop="auth",nonce="'. $nonce .'",opaque="'.md5($this->www_authenticate['realm']).'"';
+		$www_authenticate_string = 'WWW-Authenticate: Digest realm="'.$this->www_auth['realm'];
+		$www_authenticate_string.= '",qop="auth",nonce="'. $nonce .'",opaque="'.md5($this->www_auth['realm']).'"';
 
 		return array( $www_authenticate_string );
 	}
 
 
 	/** HTTP headers to extract, and the class properties to populate */
-	public function processAuthExtract( )
+	public function processAuthExtract()
 	{
 		if( $this->use_php_http_auth === true )
 			return $this->phpHttpAuth();
@@ -59,13 +59,27 @@ class HttpDigestIdentity extends HttpIdentity
 	{
 		if( isset( $_SERVER['PHP_AUTH_DIGEST'] ) )
 		{
-			return true;
+			$this->parseHttpDigest( $_SERVER['PHP_AUTH_DIGEST'] );
 		}
 		$this->errorCode = self::ERROR_FAILED_EXTRACT_PROCESSING;
 		return false;
 	}
 
-	public function http_digest_parse($digest)
+	public function validateResponse( $data, $username, $password )
+	{
+		$a1 = $data['username'].':'.$this->www_auth['realm'].':'.$password;
+		$a2 = $_SERVER['REQUEST_METHOD'].':'.$data['uri'];
+		
+		$ha1 = md5( $a1 );
+		$ha2 = md5( $a2 );
+
+		$response_raw = $a1.':'.$data['nonce'].':'.$data['nc'];
+		$response_raw.= ':'$data['cnonce'].':'.$data['qop'].':'.$a2;
+
+		$valid_response = md5($response_raw);
+	}
+
+	public function parseHttpDigest($digest)
 	{
 		//protect against missing data
 		$required_params = array('nonce'=>true, 'nc'=>true, 'cnonce'=>true, 'qop'=>true, 'username'=>true, 'uri'=>true, 'response'=>true);
@@ -74,12 +88,13 @@ class HttpDigestIdentity extends HttpIdentity
 
 		preg_match_all('@(' . $keys . ')=(?:([\'"])([^\2]+?)\2|([^\s,]+))@', $digest, $matches, PREG_SET_ORDER);
 
-		foreach ($matches as $match) {
+		foreach($matches as $match) 
+		{
 			if( $match[3] )
 				$data[$match[1]] = $match[3];
 			else
 				$data[$match[1]] = $match[4];
-			unset($required_params[$match[1]]);
+			unset( $required_params[$match[1]] );
 		}
 
 		if( $required_params !== array() )
