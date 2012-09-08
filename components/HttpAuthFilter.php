@@ -1,5 +1,7 @@
 <?php
-
+/**
+ *
+ */
 class HttpAuthFilter extends CFilter
 {
 	public $accepted_auth_schemes = array();
@@ -14,7 +16,7 @@ class HttpAuthFilter extends CFilter
 	public function preFilter( $filterChain )
 	{
 		$HttpAuthRequest = new HttpAuthRequest();
-		$more_headers = array();
+		$auth_headers = array();
 	
 		$key = array_search( 
 			$HttpAuthRequest->scheme, array_map(
@@ -28,17 +30,15 @@ class HttpAuthFilter extends CFilter
 			$HttpIdentity = new $identity_class( $HttpAuthRequest );
 
 			if( $HttpIdentity->authenticate() )
-			{
-				$filterChain->run();
-				return;
-			}
-			$more_headers = $HttpIdentity->makeAuthenticateHeader();
+				return $filterChain->run();
+
+			$auth_headers = $HttpIdentity->makeAuthenticateHeader();
 		}
 
 		$Response = new Response();
 		$Response->send( 
 			'401', "Not authorized", 
-			$this->default_content_type, $more_headers
+			$this->default_content_type, $auth_headers
 		);
 	}
 
