@@ -19,17 +19,14 @@
  *
  * @author Z. Alem <info@alemcode.com>
  */
-class HttpIdentity extends CBaseUserIdentity
+abstract class HttpIdentity extends CBaseUserIdentity
 {
 
 	const ERROR_FAILED_EXTRACT_PROCESSING = 103;
 
 	public $HttpAuthRequest = null;
 
-	public $www_auth = array(
-		'auth_scheme' => 'Unencoded',
-		'realm' => 'Restricted Area'
-	);
+	public $www_auth = array();
 
 	public $username = null;
 

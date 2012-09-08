@@ -1,11 +1,12 @@
 <?php
 /**
- *
+ * Allows automated authentication of controller actions.
  */
 class HttpAuthFilter extends CFilter
 {
 	public $accepted_auth_schemes = array();
-	public $content_type = 'html';
+
+	public $default_content_type = 'html';
 
 	/**
 	 * Performs HTTP Basic Authentication
@@ -20,13 +21,13 @@ class HttpAuthFilter extends CFilter
 	
 		$key = array_search( 
 			$HttpAuthRequest->scheme, array_map(
-				'strtolower', $this-accepted_auth_schemes
+				'strtolower', $this->accepted_auth_schemes
 			)
 		);
 			
-		if( $key !== false )
+		if( $key !== false && $this->accepted_auth_schemes[$key] !== null )
 		{
-			$identity_class = 'Http'.$this-accepted_auth_schemes[$key].'Identity';
+			$identity_class = 'Http'.$this->accepted_auth_schemes[$key].'Identity';
 			$HttpIdentity = new $identity_class( $HttpAuthRequest );
 
 			if( $HttpIdentity->authenticate() )

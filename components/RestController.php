@@ -40,7 +40,6 @@ abstract class RESTController extends Controller
 	 * Options: 
 	 * - 'Basic' for Basic Authentication, 
 	 * - 'Digest' for Digest Authentication
-	 * - 'null' for Unencoded authentication
 	 */
 	public $accepted_auth_schemes = array('Basic');
 
@@ -88,9 +87,11 @@ abstract class RESTController extends Controller
 		if( $this->require_auth === true )
 		{
 			return array(
-				'applicaton.extensions.resty.components.HttpAuthFilter',
-				'accepted_auth_schemes' =>$this->accepted_auth_schemes,
-				'default_content_type' =>$this->default_content_type,
+				array( 
+				'application.extensions.resty.components.HttpAuthFilter',
+					'accepted_auth_schemes' =>$this->accepted_auth_schemes,
+					'default_content_type' =>$this->default_content_type,
+				)
 			);
 		}
 		else 
