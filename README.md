@@ -19,17 +19,17 @@ to the controller method matching the naming convention REQUEST METHOD+CLASS MET
 The following are examples of this routing form 
 (assume default REST controller directory 'api/'):
 
-	GET 	example.com/index.php/api/user/			UserController->get();
-	GET 	example.com/index.php/api/user?name=blah	UserController->get(); (with GET parameter name)
-	GET 	example.com/index.php/api/user/lookup		UserController->getLookup();
-	POST 	example.com/index.php/api/user/			UserController->post();
-	DELETE 	example.com/index.php/api/user/			UserController->delete();
+	GET     example.com/index.php/api/user/              UserController->get();
+	GET     example.com/index.php/api/user?name=blah     UserController->get(); (with GET parameter name)
+	GET 	example.com/index.php/api/user/lookup        UserController->getLookup();
+	POST    example.com/index.php/api/user/              UserController->post();
+	DELETE  example.com/index.php/api/user/              UserController->delete();
 	
 ### HTTP Authentication
 
 RESTy includes HTTP authentication support using the Basic frameworks.
 These are managed by the HTTP[auth type]Identity components. The type of authentication
-required by a RestController subclass is determined by the RestController property 'auth_type'.
+required by a RestController subclass is determined by the RestController property 'accepted_auth_schemes'.
 
 Client Authorizing using Basic
 	
@@ -40,7 +40,6 @@ Client Authorizing using Unencoded (not recommended, may corrupt header):
 
 	...Typical request headers...
 	Authorization: Unencoded username:password
-
 
 <!--
 Client Authorizing using Digest [Not Supported Yet]

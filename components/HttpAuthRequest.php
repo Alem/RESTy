@@ -1,12 +1,27 @@
 <?php
 /**
+ * HttpAuthRequest class file
+ *
+ * @author Z. Alem <info@alemcode.com>
+ * @copyright Copyright 2012, Z. Alem
+ * @license http://opensource.org/licenses/bsd-license.php The BSD License
+ */
+/**
  * HttpAuthRequest provides methods for accessing
  * the Authorization HTTP request header.
  */
 class HttpAuthRequest
 {
+	/** 
+	 * Assigned to {@link errorCode} by {@link fetch()} 
+	 * if Authentication header is missing 
+	 */
 	const ERROR_AUTH_HEADER_MISSING = 101;
 
+	/** 
+	 * Assigned to {@link errorCode} by {@link fetch()} 
+	 * if Authentication header cannot be parsed 
+	 */
 	const ERROR_INVALID_AUTH_HEADER = 102;
 
 	/**
@@ -17,15 +32,13 @@ class HttpAuthRequest
 
 	/**
 	 * The Http authorization scheme
-	 * @var string
 	 */
-	public $scheme = null;
+	public $scheme = '';
 
 	/**
 	 * The Http authorization params
-	 * @var string
 	 */
-	public $params = null;
+	public $params = '';
 
 	/**
 	 * Populates scheme and params

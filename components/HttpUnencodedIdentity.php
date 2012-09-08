@@ -17,14 +17,13 @@
  */
 class HttpBasicIdentity extends HttpIdentity
 {
+	/**
+	 * @see HttpIdentity::www_auth
+	 */
 	public $www_auth = array(
 		'auth_scheme' => 'Unencoded',
 		'realm' => 'Restricted Area'
 	);
-
-	public $username = null;
-
-	public $password = null;
 
 }
 ?>

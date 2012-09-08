@@ -17,16 +17,17 @@ abstract class RESTController extends Controller
 {
 
 	/** 
-	 * Used to provide aliases for HTTP request methods
+	 * Used to provide custom mappings for HTTP request methods
 	 * For example, 'get'=>'gt'
-	 * maps GET requests to GT<method>()
+	 * maps GET requests to gtMethod(), instead of getMethod().
 	 */
-	public $method_alias = array();
+	public $map_methods = array();
 
 	/**
 	 * Default content type header to send
+	 * @see Response::supported_formats
 	 */
-	public $default_content_type = 'html';
+	public $default_content_type = 'txt';
 
 	/**
 	 * Users must authenticate using HTTP Basic ( HttpBasicIdentity )
@@ -37,9 +38,7 @@ abstract class RESTController extends Controller
 	/**
 	 * Http Authentication type
 	 *
-	 * Options: 
-	 * - 'Basic' for Basic Authentication, 
-	 * - 'Digest' for Digest Authentication
+	 * @see HttpAuthFilter::accepted_auth_schemes
 	 */
 	public $accepted_auth_schemes = array('Basic');
 
@@ -48,19 +47,21 @@ abstract class RESTController extends Controller
 	 * actions to local methods complying with verbActionID
 	 * convention.
 	 *
+	 * If no match is found, calls {@link actionError() }.
+	 *
 	 * _Examples_ 
 	 * * a GET request to api/Post/lookup calls api/PostController->getLookup()
 	 * * a PUT request to api/Post calls api/PostController->put();
 	 *
 	 * @param string $action 	The action id. 
 	 */
-	public function actionRestRoute( $action = null )
+	public function actionRestRoute( $action = '' )
 	{
 		$request = new CHttpRequest();
 		$verb 	= $request->getRequestType();
 
-		if( isset($this->method_alias[$verb]) )
-			$verb = $this->method_alias[$verb];
+		if( isset($this->map_methods[$verb]) )
+			$verb = $this->map_methods[$verb];
 
 		$verb_action = $verb . $action;
 
@@ -75,7 +76,7 @@ abstract class RESTController extends Controller
 	 */
 	public function actionError()
 	{
-		$this->response('404', 'The requested resource could not be found.');
+		$this->response(404, 'The requested resource could not be found.');
 	}
 
 
@@ -88,9 +89,8 @@ abstract class RESTController extends Controller
 		{
 			return array(
 				array( 
-				'application.extensions.resty.components.HttpAuthFilter',
-					'accepted_auth_schemes' =>$this->accepted_auth_schemes,
-					'default_content_type' =>$this->default_content_type,
+					'application.extensions.resty.components.HttpAuthFilter',
+					'accepted_auth_schemes' =>$this->accepted_auth_schemes
 				)
 			);
 		}

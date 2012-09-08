@@ -116,7 +116,7 @@ class Response
 			$content_type = $this->content_type;
 
 		$status  = 'HTTP/1.1 ' . $status_code . ' ' . $this->status_codes[$status_code];
-		$content = 'Content-type: ' . $this->supported_formats[$content_type];
+		$content = 'Content-Type: ' . $this->supported_formats[$content_type].';'.'charset=utf-8';
 
 		header( $status );
 		header( $content );

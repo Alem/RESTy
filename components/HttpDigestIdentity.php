@@ -13,6 +13,9 @@
  */
 class HttpDigestIdentity extends HttpIdentity
 {
+	/**
+	 * @see HttpIdentity::www_auth
+	 */
 	public $www_auth= array(
 		'auth_scheme' => 'Digest',
 		'realm' => 'Restricted Area',
@@ -21,10 +24,22 @@ class HttpDigestIdentity extends HttpIdentity
 		'opaque' => '',
 	);
 
-	public $username = null;
+	/**
+	 * @see HttpIdentity::username
+	 */
+	public $username = '';
 
-	public $password = null;
+	/**
+	 * @see HttpIdentity::password
+	 */
+	public $password = '';
 
+	/**
+	 * Set to false if running PHP as a CGI script on an apache webserver.
+	 *
+	 * PHP's builtin support for http auth will not work if running as a CGI script. 
+	 * The alternative only works for the apache webserver.
+	 */
 	public $use_php_http_auth = true;
 
 	/**

@@ -1,12 +1,24 @@
 <?php
 /**
+ * HttpAuthFilter class file
+ *
+ * @author Z. Alem <info@alemcode.com>
+ * @copyright Copyright 2012, Z. Alem
+ * @license http://opensource.org/licenses/bsd-license.php The BSD License
+ */
+/**
  * Allows automated authentication of controller actions.
  */
 class HttpAuthFilter extends CFilter
 {
+	/**
+	 * Authentication schemes accepted
+	 *
+	 * Options: 
+	 * - 'Basic' for Basic Authentication, 
+	 * - 'Digest' for Digest Authentication
+	 */
 	public $accepted_auth_schemes = array();
-
-	public $default_content_type = 'html';
 
 	/**
 	 * Performs HTTP Basic Authentication
@@ -38,14 +50,10 @@ class HttpAuthFilter extends CFilter
 
 		$Response = new Response();
 		$Response->send( 
-			'401', "Not authorized", 
-			$this->default_content_type, $auth_headers
+			401, 'Not Authorized', 'txt', $auth_headers
 		);
 	}
 
-	public function postFilter( $filterChain )
-	{
-	}
 }
 
 ?>

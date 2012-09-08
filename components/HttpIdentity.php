@@ -22,18 +22,31 @@
 abstract class HttpIdentity extends CBaseUserIdentity
 {
 
+	/** 
+	 * Assigned to {@link errorCode} by {@link processAuthExtract()} 
+	 * if Authentication header could not be processed normally.
+	 */
 	const ERROR_FAILED_EXTRACT_PROCESSING = 103;
 
+	/** Holds HttpAuthRequest object */
 	public $HttpAuthRequest = null;
 
+	/** 
+	 * Details the WWW-Authenticate header 
+	 * @see makeAuthenticateHeader()
+	 */
 	public $www_auth = array();
 
-	public $username = null;
+	/** The username extracted from the authorization header */
+	public $username = '';
 
-	public $password = null;
+	/** The password extracted from the authorization header */
+	public $password = '';
 
+	/** Allows authentication against {@link test_credentials} instead of database records */
 	public $test_mode = false;
 
+	/** Credentials for succesful authentication. This should only be used for testing */
 	public $test_credentials = array( 'username' => 'api_user', 'password'=>'api_key' );
 
 	public function __construct( $HttpAuthRequest )
@@ -77,7 +90,10 @@ abstract class HttpIdentity extends CBaseUserIdentity
 			return true;
 		}
 		else
+		{
+			$this->errorCode = self::ERROR_FAILED_EXTRACT_PROCESSING;
 		       	return false;
+		}
 	}
 
 	/**
