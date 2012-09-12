@@ -1,19 +1,19 @@
 <?php
 /**
- * RESTController class file.
+ * RestController class file.
  *
  * @author Z. Alem <info@alemcode.com>
  * @copyright Copyright 2012, Z. Alem
  * @license http://opensource.org/licenses/bsd-license.php The BSD License
  */
-require( __DIR__.'/../vendors/minimvc/Response.php');
+require( dirname(__DIR__).'/vendors/minimvc/Response.php');
 /**
- * RESTController provides the basic methods for a controller offering
+ * RestController provides the basic methods for a controller offering
  * REST services. 
  *
  * @author Z. Alem <info@alemcode.com>
  */
-abstract class RESTController extends Controller
+abstract class RestController extends Controller
 {
 
 	/** 
@@ -35,12 +35,23 @@ abstract class RESTController extends Controller
 	 */
 	public $require_auth = true;
 
+	/** Mandate SSL/TLS encryption */
+	public $require_ssl = false;
+
 	/**
 	 * Http Authentication type
 	 *
 	 * @see HttpAuthFilter::accepted_auth_schemes
 	 */
 	public $accepted_auth_schemes = array('Basic');
+
+	/**
+	 * Additional headers to add to every request.
+	 *
+	 *      e.g. array( 'Header1: Text', 'Header2: Text' )
+	 */
+	public $additional_headers = array();
+
 
 	/**
 	 * Provides common structure for routing verb specific 
@@ -85,19 +96,39 @@ abstract class RESTController extends Controller
 	 */
 	public function filters()
 	{
+		$filters = array();
+		
 		if( $this->require_auth === true )
 		{
-			return array(
-				array( 
+			$filters[]= array( 
 					'application.extensions.resty.components.HttpAuthFilter',
 					'accepted_auth_schemes' =>$this->accepted_auth_schemes
-				)
 			);
 		}
-		else 
-			return array();
+		if( $this->require_ssl === true )
+		{
+			$filters[]= 'ssl';
+		}
+
+		return $filters;
 	}
 
+	/**
+	 * Require SSL. Throw a 403.4 error if the connection is unencrypted.
+	 */
+	public function filterSsl( $filterChain )
+	{
+			$request = new CHttpRequest();
+			if( $request->getIsSecureConnection())
+				$filterChain->run();
+			else
+			{
+				$response = new Response();
+				$response->status_codes[403.4] = 'Forbidden: SSL required';
+				$body = 'The resource you requested requires SSL, but your request was made through unencrypted HTTP.';
+				$response->send(403.4, $body, 'txt' );
+			}
+	}
 
 	/**
 	 * Sends HTTP header and body.
@@ -112,6 +143,9 @@ abstract class RESTController extends Controller
 	{
 		$response = new Response();
 		$response->content_type = $this->default_content_type;
+
+		$more_headers = $more_headers + $this->additional_headers; 
+
 		$response->send( $status_code, $body, $content_type, $more_headers );
 	}
 }

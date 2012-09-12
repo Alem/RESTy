@@ -115,7 +115,15 @@ class Response
 		if( !isset( $content_type ) )
 			$content_type = $this->content_type;
 
-		$status  = 'HTTP/1.1 ' . $status_code . ' ' . $this->status_codes[$status_code];
+		if( isset($this->status_codes[$status_code] ) )
+			$status_code_msg = $this->status_codes[$status_code];
+		else 
+			$status_code_msg = '';
+
+		if( !isset( $this->supported_formats[$content_type] ) )
+			throw new Exception( "The requested content type '$content_type' is not supported by the Response object.");
+
+		$status  = 'HTTP/1.1 ' . $status_code . ' ' . $status_code_msg;
 		$content = 'Content-Type: ' . $this->supported_formats[$content_type].';'.'charset=utf-8';
 
 		header( $status );

@@ -18,9 +18,6 @@ class RestUrlRule extends CBaseUrlRule
 	/** The RestController routing action/method */
 	public $routing_method = 'RestRoute';
 
-	/** Mandate SSL/TLS encryption */
-	public $require_ssl = false;
-
 	/** Where rest controllers reside */
 	public $rest_controller_dir = 'api/';
 
@@ -39,9 +36,6 @@ class RestUrlRule extends CBaseUrlRule
 	 */
 	public function parseUrl($manager,$request,$pathInfo,$rawPathInfo)
 	{
-		if( $this->require_ssl && !$request->getIsSecureConnection())
-			return false;
-
 		if(preg_match('#^'.$this->rest_controller_dir.'#',$pathInfo,$matches))
 		{
 			// 0=>api, 1=>controller, 2=>action, 3=>params

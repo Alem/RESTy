@@ -4,15 +4,15 @@ RESTy - A RESTful Yii Extension
 DESCRIPTION
 ---------------
 
-RESTy enhances the Yii framework with functionality for simple, extendible, 
-configurable, and intuitive RESTful API support.
+RESTy enhances the Yii framework with extendible, configurable, and intuitive RESTful API support.
 
-RESTful API is provided through the creation of subclasses of the RestController 
-component. These subclasses reside in their own sub-directory within the normal controllers/
-directory (e.g. controllers/api/ ).
+RESTful API is provided by the creation of subclasses of the RestController component.
+These subclasses reside in their own sub-directory within the normal controllers directory.
 
-HTTP requests to these controllers are routed by their HTTP request method 
-to the controller method matching the naming convention REQUEST METHOD+CLASS METHOD().
+     e.g. controllers/api/ResourceController.php
+
+HTTP requests to these controllers are then routed according to their HTTP request method.
+Specifically, to the controller method matching the naming convention REQUEST METHOD+CLASS METHOD().
 
 ### Example REST Routing
 
@@ -27,9 +27,12 @@ The following are examples of this routing form
 	
 ### HTTP Authentication
 
-RESTy includes HTTP authentication support using the Basic frameworks.
-These are managed by the HTTP[auth type]Identity components. The type of authentication
-required by a RestController subclass is determined by the RestController property 'accepted_auth_schemes'.
+RESTy includes HTTP authentication support using the HTTP authentication framework.
+These are managed by the HTTP[auth type]Identity components. 
+
+The type of authentication accepted by a RestController subclass is determined 
+by the RestController property 'accepted_auth_schemes'.
+
 
 Client Authorizing using Basic
 	
@@ -58,9 +61,9 @@ Client Authorizing using Digest [Not Supported Yet]
 
 #### General Tip
 
-This extension, and method of providing an API, result another set of controllers.
+This extension, and its method of providing an API, results in another set of controllers to maintain.
 A simple way of reducing the development required to support both sets of controllers 
-is to have your application models be as controller/implementation-neutral as possible.
+is to have your application models be as controller/implementation neutral as possible.
 
 
 SETUP
@@ -95,6 +98,17 @@ SETUP
 
 
         yiic  migrate  --migrationPath=application.extensions.resty.migrations
+
+4. Create a sub-class of RestController, for your REST controllers to extends from, in protected/components/. 
+   Or, directly extend from RestController.
+
+
+        Extending from custom RestController:
+        class MyappRestController extends RestController{ ...
+        class UserController extends MyappRestController{ ..
+			
+        Extending directly:
+        class UserController extends RestController{...
 
 
 LICENSE
