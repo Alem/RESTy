@@ -67,9 +67,9 @@ abstract class RestController extends Controller
 	 * @param string $action 	The action id. 
 	 */
 	public function actionRestRoute( $action = '' )
-	{
+	{   
 		$request = new CHttpRequest();
-		$verb 	= $request->getRequestType();
+		$verb 	 = $request->getRequestType();
 
 		if( isset($this->map_methods[$verb]) )
 			$verb = $this->map_methods[$verb];
@@ -98,6 +98,8 @@ abstract class RestController extends Controller
 	{
 		$filters = array();
 		
+		//authorize ip filter is a must
+		$filters[] = array('application.extensions.resty.components.AuthorizedIPFilter') ;
 		if( $this->require_auth === true )
 		{
 			$filters[]= array( 

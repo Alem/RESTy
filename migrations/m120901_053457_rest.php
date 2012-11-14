@@ -13,7 +13,8 @@ class m120901_053457_rest extends CDbMigration
 	public $default = array( 
 		'username' => 'api_user', 
 		'password' => 'api_key', 
-		'email'=>'info@example.com' 
+		'email'=>'info@example.com',
+		'ip_authorized'=>'127.0.0.1' 
 	);
 
 	public function safeUp()
@@ -24,23 +25,26 @@ class m120901_053457_rest extends CDbMigration
 			"password" => "varchar(128) NOT NULL DEFAULT ''",
 			"email" => "varchar(128) NOT NULL DEFAULT ''",
 			"activation_key" => "varchar(128) NOT NULL DEFAULT ''",
-			"createtime" => "int(10) NOT NULL DEFAULT 0",
-			"lastvisit" => "int(10) NOT NULL DEFAULT 0",
-			"privilege" => "int(1) NOT NULL DEFAULT 0",
-			"status" => "int(1) NOT NULL DEFAULT 0",
+			"ip_authorized"=>"text",
+			"createtime" => "INTEGER NOT NULL DEFAULT 0",
+			"lastvisit" => "INTEGER NOT NULL DEFAULT 0",
+			"privilege" => "INTEGER NOT NULL DEFAULT 0",
+			"status" => "INTEGER NOT NULL DEFAULT 0",
 		));
 
 		if( in_array('--interactive=0',$_SERVER['argv'])) 
 		{
-			$this->_model->username = $this->default['username'];
-			$this->_model->password = $this->default['password'];
-			$this->_model->email 	= $this->default['email'];
+			$this->_model->username      = $this->default['username'];
+			$this->_model->password      = $this->default['password'];
+			$this->_model->email 	     = $this->default['email'];
+			$this->_model->ip_authorized = $this->default['ip_authorized'];
 		}
 		else
 		{
 			$this->stdinToModel('First api user', 'username', $this->default['username'] );
 			$this->stdinToModel('First user\'s password', 'password', $this->default['password'] );
 			$this->stdinToModel('First user\'s email', 'email', $this->default['email'] );
+			$this->stdinToModel('First authorized IP address', 'ip_authorized', $this->default['ip_authorized'] );
 		}
 
 		$this->insert( $this->api_user_table, array(
@@ -49,6 +53,7 @@ class m120901_053457_rest extends CDbMigration
 			'password' => md5($this->_model->password),
 			'email' => $this->_model->email,
 			'activation_key' => md5(microtime()),
+			'ip_authorized'=>$this->_model->ip_authorized,
 			'createtime' => time(),
 			'lastvisit' => '0',
 			'privilege' => '1',
